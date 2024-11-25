@@ -102,16 +102,20 @@ const FilePreviewDialog = (props: FilePreviewProps) => {
   };
 
   const handleNext = (newIndex: number) => {
-    if (!uploadedFiles || !uploadedFiles.length) return;
+    if (!uploadedFiles?.length) return;
+    if (!loadFile) {
+      console.error("loadFile handler is not defined");
+      return;
+    }
 
     if (newIndex < 0 || newIndex >= uploadedFiles.length) return;
 
     const nextFile = uploadedFiles[newIndex];
 
-    if (!nextFile || !nextFile.id) return;
+    if (!nextFile?.id) return;
 
     const associating_id = nextFile.associating_id || "";
-    loadFile!(nextFile, associating_id);
+    loadFile(nextFile, associating_id);
     setIndex(newIndex);
   };
 
@@ -153,17 +157,20 @@ const FilePreviewDialog = (props: FilePreviewProps) => {
         <>
           <div className="mb-2 flex flex-col items-start justify-between md:flex-row">
             <div>
-              <p className="text-xl font-semibold text-gray-800">
+              <p className="text-2xl font-bold text-gray-800">
                 {file_state.name}.{file_state.extension}
               </p>
               {uploadedFiles &&
                 uploadedFiles[index] &&
                 uploadedFiles[index].created_date && (
-                  <p className="text-sm text-gray-500">
+                  <p className="mt-1 text-sm text-gray-600">
                     Created on{" "}
                     {new Date(
                       uploadedFiles[index].created_date!,
-                    ).toLocaleString()}
+                    ).toLocaleString("en-US", {
+                      dateStyle: "long",
+                      timeStyle: "short",
+                    })}
                   </p>
                 )}
             </div>
