@@ -102,16 +102,19 @@ const FilePreviewDialog = (props: FilePreviewProps) => {
   };
 
   const handleNext = (newIndex: number) => {
-    if (!uploadedFiles || !uploadedFiles.length) return;
+    if (!uploadedFiles?.length) return;
+    if (!loadFile) {
+      console.error('loadFile handler is not defined');
+      return;
+    }
 
     if (newIndex < 0 || newIndex >= uploadedFiles.length) return;
 
     const nextFile = uploadedFiles[newIndex];
-
-    if (!nextFile || !nextFile.id) return;
+    if (!nextFile?.id) return;
 
     const associating_id = nextFile.associating_id || "";
-    loadFile!(nextFile, associating_id);
+    loadFile(nextFile, associating_id);
     setIndex(newIndex);
   };
 
