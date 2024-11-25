@@ -111,7 +111,6 @@ const FilePreviewDialog = (props: FilePreviewProps) => {
     if (newIndex < 0 || newIndex >= uploadedFiles.length) return;
 
     const nextFile = uploadedFiles[newIndex];
-
     if (!nextFile?.id) return;
 
     const associating_id = nextFile.associating_id || "";
