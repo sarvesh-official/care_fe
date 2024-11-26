@@ -103,11 +103,7 @@ const FilePreviewDialog = (props: FilePreviewProps) => {
 
   const handleNext = (newIndex: number) => {
     if (!uploadedFiles?.length) return;
-    if (!loadFile) {
-      console.error("loadFile handler is not defined");
-      return;
-    }
-
+    if (!loadFile) return;
     if (newIndex < 0 || newIndex >= uploadedFiles.length) return;
 
     const nextFile = uploadedFiles[newIndex];
@@ -141,6 +137,21 @@ const FilePreviewDialog = (props: FilePreviewProps) => {
       ? "-rotate-90"
       : `rotate-${normalizedRotation}`;
   }
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!show) return;
+      if (e.key === "ArrowLeft" && index > 0) {
+        handleNext(index - 1);
+      }
+      if (e.key === "ArrowRight" && index < (uploadedFiles?.length || 0) - 1) {
+        handleNext(index + 1);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [show, index, uploadedFiles]);
 
   return (
     <DialogModal
@@ -190,10 +201,15 @@ const FilePreviewDialog = (props: FilePreviewProps) => {
             </div>
           </div>
           <div className="flex flex-1 items-center justify-center">
-            {uploadedFiles && uploadedFiles.length > 1 && index > 0 && (
+            {uploadedFiles && uploadedFiles.length > 1 && (
               <ButtonV2
-                className="cursor-pointer bg-primary-500 rounded-md mr-2"
+                className="cursor-pointer bg-primary-500 rounded-md mr-4"
                 onClick={() => handleNext(index - 1)}
+                disabled={index <= 0}
+                aria-label="Previous file"
+                onKeyDown={(e) =>
+                  e.key === "ArrowLeft" && handleNext(index - 1)
+                }
               >
                 <CareIcon icon="l-arrow-left" className="h-4 w-4" />
               </ButtonV2>
@@ -237,16 +253,19 @@ const FilePreviewDialog = (props: FilePreviewProps) => {
               )}
             </div>
 
-            {uploadedFiles &&
-              uploadedFiles.length > 1 &&
-              index < uploadedFiles.length - 1 && (
-                <ButtonV2
-                  className="cursor-pointer bg-primary-500 rounded-md"
-                  onClick={() => handleNext(index + 1)}
-                >
-                  <CareIcon icon="l-arrow-right" className="h-4 w-4" />
-                </ButtonV2>
-              )}
+            {uploadedFiles && uploadedFiles.length > 1 && (
+              <ButtonV2
+                className="cursor-pointer bg-primary-500 rounded-md ml-4"
+                onClick={() => handleNext(index + 1)}
+                disabled={index >= uploadedFiles.length - 1}
+                aria-label="Next file"
+                onKeyDown={(e) =>
+                  e.key === "ArrowRight" && handleNext(index + 1)
+                }
+              >
+                <CareIcon icon="l-arrow-right" className="h-4 w-4" />
+              </ButtonV2>
+            )}
           </div>
           <div className="flex items-center justify-between">
             <div className="mt-2 flex w-full flex-col justify-center gap-3 md:flex-row">
