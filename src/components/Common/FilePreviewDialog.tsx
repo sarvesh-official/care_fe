@@ -102,9 +102,13 @@ const FilePreviewDialog = (props: FilePreviewProps) => {
   };
 
   const handleNext = (newIndex: number) => {
-    if (!uploadedFiles?.length) return;
-    if (!loadFile) return;
-    if (newIndex < 0 || newIndex >= uploadedFiles.length) return;
+    if (
+      !uploadedFiles?.length ||
+      !loadFile ||
+      newIndex < 0 ||
+      newIndex >= uploadedFiles.length
+    )
+      return;
 
     const nextFile = uploadedFiles[newIndex];
     if (!nextFile?.id) return;
